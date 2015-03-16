@@ -91,6 +91,19 @@ picker.directive('dateRangePicker', [
                 el.daterangepicker(opts, (start, end, label) ->
                     $timeout(->
                       $scope.$apply(->
+                          # Adjust times to account for daylight savings differences
+                          currentOffset = new Date().getTimezoneOffset()
+
+                          startOffset = start.toDate().getTimezoneOffset()
+                          startOffsetDiff = startOffset - currentOffset
+                          if (startOffsetDiff != 0)
+                            start = start.add(startOffsetDiff, 'minutes')
+
+                          endOffset = end.toDate().getTimezoneOffset()
+                          endOffsetDiff = endOffset - currentOffset
+                          if (endOffsetDiff != 0)
+                            end = end.add(endOffsetDiff, 'minutes')
+
                           modelCtrl.$setViewValue({
                               startDate: start.toDate()
                               endDate: end.toDate()
@@ -103,8 +116,9 @@ picker.directive('dateRangePicker', [
 
             _init()
 
-            # If input is cleared manually, set dates to null.
+            # When user types in dates
             el.change(() ->
+                # If input is cleared manually, set dates to null.
                 if $.trim(el.val()) == ''
                     $timeout(->
                         $scope.$apply(->
