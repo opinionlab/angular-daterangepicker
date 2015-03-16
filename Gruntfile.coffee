@@ -14,7 +14,7 @@ module.exports = (grunt) ->
 
         watch:
             files: ['example.html', 'coffee/*.coffee']
-            tasks: ['coffee']
+            tasks: ['coffee', 'uglify']
 
         uglify:
             options:
